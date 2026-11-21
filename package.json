@@ -1,7 +1,7 @@
 {
   "name": "dsh-restart",
   "version": "0.1.0",
-  "description": "DSH \u91cd\u542f\u63d2\u4ef6\uff1a\u53ef\u914d\u7f6e\u7684\u91cd\u542f\u65b9\u5f0f\uff08Node \u539f\u751f / \u65e7 PowerShell \u9002\u914d\uff09\u3001\u91cd\u542f\u540e\u81ea\u52a8\u7ee7\u7eed\u7684\u63d0\u793a\u8bcd\u3001\u53ef\u9009\u770b\u95e8\u72d7\u81ea\u52a8\u62c9\u8d77\u3002",
+  "description": "DSH 重启插件：可配置的重启方式（Node 原生 / 旧 PowerShell 适配）、重启后自动继续的提示词、可选看门狗自动拉起。",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -58,14 +58,14 @@
   "scripts": {
     "build": "node -e \"fs.rmSync('lib',{recursive:true,force:true})\" && tsc -p tsconfig.json && tsdown",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "prepare": "pnpm run build",
+    "prepare": "pnpm run build && husky",
     "prepack": "pnpm run build",
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-tools": "^0.1.0-rc.6",
-    "@deepseek-ai/dsh-settings": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-llm": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-settings": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-tools": "^0.1.0-rc.6",
     "@deepseek-ai/schemastery": "^3.18.1"
   },
   "peerDependencies": {
@@ -105,19 +105,22 @@
     }
   },
   "devDependencies": {
-    "@types/node": "^24.0.0",
-    "@types/react": "~18.3.1",
-    "@types/react-dom": "~18.3.1",
-    "@deepseek-ai/dsh-commands": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-agent": "^0.1.0-rc.6",
-    "@deepseek-ai/dsh-shell": "^0.1.0-rc.6",
-    "@deepseek-ai/dsh-sandbox-policy": "^0.1.0-rc.6",
-    "@deepseek-ai/dsh-host-webserver": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-client-locale": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-client-runtime": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-client-ui-settings": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-client-ui-settings-plugins": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-client-ui-slots": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-commands": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-host-webserver": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-sandbox-policy": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-shell": "^0.1.0-rc.6",
+    "@types/node": "^24.0.0",
+    "@types/react": "~18.3.1",
+    "@types/react-dom": "~18.3.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.1",
+    "prettier": "^3.10.1",
     "react": "^18.2.0",
     "react-dom": "18.2.0",
     "tsdown": "^0.22.2",
