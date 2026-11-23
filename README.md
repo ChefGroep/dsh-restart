@@ -1,21 +1,26 @@
 # dsh-restart
 
-重启整个 DeepSeek Harness 进程的插件，用于重新加载插件与配置（profile 的 cordis 组合、settings 等）。host + client 双半，装进 profile 的 bundle 后即可用。
+Een plug-in om het volledige DeepSeek Harness-proces opnieuw op te starten. Hiermee worden plug-ins en configuraties opnieuw geladen (zoals de Cordis-combinatie van het profiel, instellingen enzovoort).
 
-## 功能
+De plug-in bestaat uit twee onderdelen: een host- en een clientgedeelte. Zodra beide in de bundle van een profiel zijn opgenomen, kan de plug-in worden gebruikt.
 
-- **模型工具 `restart_harness`**：让 agent 直接安排一次进程重启（可选 `delayMs`）。
-- **`/restart` 斜杠命令**：在 UI 里手动触发重启。
-- **配置卡片**（设置 → 插件 → 插件配置 → 「DSH 重启」）：可视化编辑以下设置，改动即时写入 `settings.yaml`：
-  - `legacyRestart` — 旧 PowerShell/WMI/taskkill 重启方式（默认关闭，用 Node 原生方式）。
-  - `continuePrompt` — 重启后自动继续时注入给 agent 的提示词。
-  - `watchdogEnabled` — 崩溃/关闭时自动拉起 DSH（默认关闭，需谨慎）。
-  - `watchdogCooldownMs` / `watchdogPollMs` — 看门狗冷却与轮询间隔。
-- **「立即重启」按钮**：卡片内的同源重启端点。出于安全考虑，仅接受来自环回地址（127.0.0.1 / localhost）的同源 POST 请求；经反向代理/远程访问时该按钮会被拒绝（403）。
+## Functies
 
-## 安装
+- Modeltool `restart_harness`: Hiermee kan de agent rechtstreeks een herstart inplannen (met optionele parameter `delayMs`).
+- Slash-opdracht `/restart`: Hiermee kun je de herstart handmatig vanuit de gebruikersinterface uitvoeren.
+- Configuratiekaart (Instellingen → Plug-ins → Plug-inconfiguratie → 'DSH Restart'): Hiermee kun je de volgende instellingen visueel bewerken. Wijzigingen worden direct opgeslagen in `settings.yaml`:
+  - `legacyRestart` — De oude herstartmethode via PowerShell/WMI/taskkill (standaard uitgeschakeld; standaard wordt de native Node.js-methode gebruikt).
+  - `continuePrompt` — De prompt die na een herstart automatisch aan de agent wordt doorgegeven om verder te gaan.
+  - `watchdogEnabled` — Start DSH automatisch opnieuw op bij een crash of afsluiting (standaard uitgeschakeld; gebruik deze optie voorzichtig).
+  - `watchdogCooldownMs` / `watchdogPollMs` — De afkoelperiode en het interval waarmee de watchdog controleert.
+- Knop 'Nu opnieuw opstarten': Hiermee kun je DSH direct opnieuw opstarten via een endpoint op dezelfde host.
+  Om veiligheidsredenen accepteert dit endpoint uitsluitend POST-verzoeken van dezelfde host via een loopbackadres (`127.0.0.1` / `localhost`). Bij toegang via een reverse proxy of op afstand wordt de aanvraag geweigerd met foutcode 403 (Forbidden).
 
-1. 把包加入 profile 依赖并挂进 bundle：
+## Installatie
+
+1. Voeg het pakket toe aan de profielafhankelijkheden en neem het op in de bundle:
+
+jsonc
 
 ```jsonc
 // profiles/<profile>/package.json
@@ -25,9 +30,11 @@
 }
 ```
 
-2. 重启 DSH（`/restart` 或 `restart_harness`），刷新页面后即可看到卡片。
+2. Start DSH opnieuw op (via `/restart` of `restart_harness`) en vernieuw vervolgens de pagina. De configuratiekaart wordt nu zichtbaar.
 
-## 构建
+## Bouwen (Build)
+
+bash
 
 ```bash
 pnpm install
@@ -35,4 +42,5 @@ node scripts/link-dsh-workspace.mjs --source <path-to-deepseek-harness>
 pnpm run build
 ```
 
-host 半由 `tsc` 输出到 `lib/index.js`（`@deepseek-ai/*` 保持外部依赖）；client 半由 `tsdown` 打成单文件 `lib/client.js`。
+- Het hostgedeelte wordt met `tsc` gecompileerd naar `lib/index.js`. De afhankelijkheden van `@deepseek-ai/*` blijven externe afhankelijkheden.
+- Het clientgedeelte wordt met `tsdown` gebundeld tot één enkel bestand: `lib/client.js`.
